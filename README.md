@@ -23,9 +23,9 @@
 - Record unresolved decisions in shared/meeting-notes.
 - Do not treat an individual draft as an agreed team decision until reviewed.
 
-## Deadline Plan
+## Deadline Plan: 31/10/2026
 
-Use [shared/seven-day-execution-plan.md](shared/seven-day-execution-plan.md) to sequence the exercises and define the minimum demonstrable vertical slice for the deadline.
+Use [shared/project-execution-plan.md](shared/project-execution-plan.md) to sequence the exercises and define the minimum demonstrable vertical slice for the deadline.
 
 ## Working Together
 

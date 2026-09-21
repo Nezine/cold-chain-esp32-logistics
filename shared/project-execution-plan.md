@@ -1,6 +1,6 @@
-# Seven-Day Execution Plan
+# Project Plan: Finish by 31/10/2026
 
-Use this plan as the team's shared exercise sheet. Work through one day at a time. The goal is a small demonstration, not a complete logistics platform. You do not need advanced programming knowledge to complete the planning and testing exercises.
+Use this plan as the team's shared exercise sheet from now until the deadline. The goal is a small demonstration, not a complete logistics platform. You do not need advanced programming knowledge to complete the planning and testing exercises.
 
 ## Team Roles
 
@@ -10,9 +10,11 @@ Use this plan as the team's shared exercise sheet. Work through one day at a tim
 4. **IoT Simulation:** prepares example temperature readings; physical ESP32 hardware is optional.
 5. **QA and Documentation:** checks the results and writes down what works.
 
-Everyone works together on Days 1 and 2. After that, each person works on their own part and shows progress to the group each day.
+Everyone works together during Week 1. After that, each person works on their own part and shows progress to the group at least twice per week.
 
-## Day 1: Agree on the Boundary
+## Week 1: Agree on the Project
+
+### Exercise 1: Agree on the Boundary
 
 **Group exercise**
 
@@ -31,7 +33,7 @@ Everyone works together on Days 1 and 2. After that, each person works on their 
 
 **Done when:** everyone can explain the demonstration in the same order and using the same words.
 
-## Day 2: Agree on the Rules
+### Exercise 2: Agree on the Rules
 
 **Group exercise**
 
@@ -51,7 +53,7 @@ Everyone works together on Days 1 and 2. After that, each person works on their 
 
 **Done when:** the people making the screens, system, sensor examples, and checks all agree on the same information.
 
-## Day 3: Make the First Pieces
+## Week 2: Make the First Pieces
 
 **Domain and Backend**
 
@@ -84,7 +86,7 @@ Everyone works together on Days 1 and 2. After that, each person works on their 
 
 **Done when:** each person has something small to show another member, even if the pieces are not connected yet.
 
-## Day 4: Integrate the Normal Path
+## Week 3: Connect the Normal Path
 
 **Group exercise**
 
@@ -102,7 +104,7 @@ Everyone works together on Days 1 and 2. After that, each person works on their 
 
 **Done when:** a new team member can follow the instructions and repeat the normal demonstration.
 
-## Day 5: Integrate Alerts and Dispatch
+## Week 4: Connect Alerts and Dispatch
 
 **Group exercise**
 
@@ -114,7 +116,7 @@ Everyone works together on Days 1 and 2. After that, each person works on their 
 
 **Done when:** the full path from temperature example to user response works without changing saved data by hand.
 
-## Day 6: Test, Simplify, and Document
+## Week 5: Test, Simplify, and Document
 
 **QA-led exercise**
 
@@ -132,7 +134,7 @@ Everyone works together on Days 1 and 2. After that, each person works on their 
 
 **Done when:** the check list says what really works, not what the team hoped to build.
 
-## Day 7: Rehearse and Submit
+## Week 6: Rehearse and Submit by 31/10/2026
 
 1. Run the demo from a clean checkout or clearly documented starting state.
 2. Rehearse a five-minute explanation: problem, domain rules, architecture, normal path, critical alert path, and limitations.
