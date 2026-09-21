@@ -1,0 +1,23 @@
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/
+.idea/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Build and dependency output
+node_modules/
+dist/
+build/
+__pycache__/
+*.pyc
+
+# Local test and runtime output
+coverage/
+*.log
