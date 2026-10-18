@@ -3,6 +3,9 @@
 #include <fstream>
 #include <stdexcept>
 #include <string>
+#include <iomanip>
+#include <random>
+#include <sstream>
 #include <json-c/json.h>
 
 // One writer per file. Append-only classroom storage, not a production database.
@@ -17,8 +20,14 @@ public:
     }
 
     void save(json_object* reading, const char* severity) {
+        // Independent of sequence numbers, which reset when a device reboots.
+        std::random_device random;
+        std::ostringstream id;
+        id << std::hex << std::setfill('0');
+        for (int i = 0; i < 4; ++i) id << std::setw(8) << random();
         // Wrap the validated reading so original fields remain intact.
         json_object* alert = json_object_new_object();
+        json_object_object_add(alert, "alert_id", json_object_new_string(id.str().c_str()));
         json_object_object_add(alert, "severity", json_object_new_string(severity));
         json_object_object_add(alert, "status", json_object_new_string("open"));
         json_object_object_add(alert, "reading", json_object_get(reading));
