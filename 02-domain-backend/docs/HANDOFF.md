@@ -89,7 +89,7 @@ Workflow .github/workflows/backend.yml chạy build/check/demo và compile firmw
 
 ## NA — slide + báo cáo
 
-Có thể dùng [giải thích OOP](OOP_WALKTHROUGH.md) và demo.py cho kịch bản trình bày.
+Có thể dùng demo.py và các lớp trong src/backend.h cho kịch bản trình bày.
 Tách rõ bằng chứng: core C++ chạy thật, API adapter Python, sensor mô phỏng,
 firmware compile, UI đang nối API. Không ghi “đã triển khai DDD đầy đủ” hoặc “real-time
 qua WebSocket”: đây là phân tách nghiệp vụ/lưu trữ nhỏ và Observer đồng bộ nội bộ.

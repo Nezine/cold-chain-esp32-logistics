@@ -15,7 +15,6 @@ bash 02-domain-backend/tools/start.sh
 
 - [Bàn giao theo thành viên, firmware bridge, Git và giới hạn](docs/HANDOFF.md)
 - [Contract API v1 và cách Dũng gọi C++ từ ngôn ngữ API bất kỳ](docs/API_V1.md)
-- [Giải thích OOP và câu hỏi bảo vệ cho HAnh](docs/OOP_WALKTHROUGH.md)
 - [Demo JSONL dispatch cũ](notes/dispatch-demo.md) — độc lập với snapshot backend mới.
 
 Dữ liệu/runtime/dependency nằm trong build/ đã ignore. Chưa nối frontend trong

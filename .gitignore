@@ -21,3 +21,6 @@ __pycache__/
 # Local test and runtime output
 coverage/
 *.log
+
+# Personal explanation and presentation practice notes
+/02-domain-backend/docs/OOP_WALKTHROUGH.md
