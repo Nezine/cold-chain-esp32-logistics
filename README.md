@@ -30,3 +30,8 @@ Use [shared/project-execution-plan.md](shared/project-execution-plan.md) to sequ
 ## Working Together
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) before adding work. It explains where personal notes, shared decisions, code, and test results belong.
+
+## Backend integration handoff
+
+Start with [HAnh’s C++ backend](02-domain-backend/README.md) for setup, an end-to-end
+demo, API contracts, role-specific integration steps, and OOP presentation notes.

@@ -1,7 +1,7 @@
 # ESP32 Firmware
 
 The current C++ firmware produces simulated readings on an ESP32 and prints
-one JSON object per line over USB serial. It cycles through 5, 9, and 12 degrees
+one JSON object per line over USB serial. It cycles through 2, 8, 8.1, 10, and 10.1 degrees
 Celsius every two seconds. It does not yet read hardware or send to a backend.
 
 - Firmware source code: `src/`
@@ -24,12 +24,12 @@ pio device monitor -b 115200
 Example output (uptime varies):
 
 ```json
-{"device_id":"device1","shipment_id":"shipment1","sequence":0,"uptime_ms":100,"temperature":5.00,"unit":"C"}
-{"device_id":"device1","shipment_id":"shipment1","sequence":1,"uptime_ms":2100,"temperature":9.00,"unit":"C"}
-{"device_id":"device1","shipment_id":"shipment1","sequence":2,"uptime_ms":4100,"temperature":12.00,"unit":"C"}
+{"device_id":"device1","shipment_id":"shipment1","sequence":0,"uptime_ms":100,"temperature":2.00,"unit":"C"}
+{"device_id":"device1","shipment_id":"shipment1","sequence":1,"uptime_ms":2100,"temperature":8.00,"unit":"C"}
+{"device_id":"device1","shipment_id":"shipment1","sequence":2,"uptime_ms":4100,"temperature":8.10,"unit":"C"}
 ```
 
-The next reading returns to 5 degrees with sequence 3. Boot messages may appear
+The next readings are 10 and 10.1 degrees, then the cycle returns to 2. Boot messages may appear
 before the JSON. `uptime_ms` is elapsed time since boot, not a wall-clock time;
 it wraps after approximately 50 days. Sequence numbers reset after reboot and
 are not globally unique reading IDs. This is a draft serial format, distinct
@@ -37,12 +37,13 @@ from the earlier Python fixture's timestamp/reading ID contract. Agree on the
 backend format before integration.
 
 IDs are fixed simple strings; arbitrary IDs would require JSON escaping.
-The demo has no network, database, delivery retry, or alert persistence.
-Classification belongs in the future backend. A successful build verifies
+The firmware has no network or delivery retry. To send serial data to the C++
+backend through the host bridge, follow the [backend handoff](../02-domain-backend/docs/HANDOFF.md).
+Classification and persistence belong in that backend. A successful build verifies
 compilation; live serial output must also be checked on the physical board.
 
 ## Next exercise
 
-Add 8.0 to `demoTemperatures`, upload, and check that four readings repeat.
+Add 5.0 to `demoTemperatures`, upload, and check that six readings repeat.
 Explain why `demoCount` updates without changing the loop. Restore the original
-three samples afterward if the team needs the original demonstration.
+five samples afterward if the team needs the original demonstration.
