@@ -5,9 +5,10 @@ const STORAGE_KEY = "coldchain-theme";
 function getInitialTheme() {
   const saved = window.localStorage.getItem(STORAGE_KEY);
   if (saved === "light" || saved === "dark") return saved;
-  return window.matchMedia("(prefers-color-scheme: light)").matches
-    ? "light"
-    : "dark";
+  const prefersLight =
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-color-scheme: light)").matches;
+  return prefersLight ? "light" : "dark";
 }
 
 // Drives the single `data-theme` attribute on <html>. Every color in

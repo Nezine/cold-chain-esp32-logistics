@@ -1,5 +1,8 @@
 export default function Reports({ shipments }) {
-  const readable = shipments.filter((item) => item.connection === "ok");
+  // Only shipments with a real measured temperature count (new ones have null).
+  const readable = shipments.filter(
+    (item) => item.connection === "ok" && typeof item.temperature === "number"
+  );
   const average =
     readable.reduce((sum, item) => sum + item.temperature, 0) /
     (readable.length || 1);

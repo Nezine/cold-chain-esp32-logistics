@@ -1,8 +1,4 @@
-// Hand-built sun/moon toggle, kept dependency-free on purpose: this project
-// is Create React App + plain CSS (no Next.js "@/" aliases, no package
-// registry access in this environment), so an external icon package could
-// not be installed here. The prop shape below intentionally mirrors what
-// a `toggled` / `onClick` controlled component looks like.
+
 export default function ThemeToggle({ toggled, onClick, className = "" }) {
   return (
     <button

@@ -1,5 +1,5 @@
 import AlertPanel from "../components/AlertPanel";
 
-export default function Alerts({ shipments }) {
-  return <AlertPanel shipments={shipments} title="Active Alerts" />;
+export default function Alerts({ shipments, alerts }) {
+  return <AlertPanel alerts={alerts} shipments={shipments} title="Alerts" limit={50} />;
 }
