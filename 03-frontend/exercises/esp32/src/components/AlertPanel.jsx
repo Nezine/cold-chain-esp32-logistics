@@ -19,9 +19,6 @@ export default function AlertPanel({
   const sorted = [...alerts].sort(byPriority);
   const shown = sorted.slice(0, limit);
 
-export default function AlertPanel({ shipments, alerts = [], title = 'Alert history', onSelect }) {
-  const byId = new Map(shipments.map((shipment) => [shipment.id, shipment]));
-  const visible = alerts.filter((alert) => byId.has(alert.shipmentId));
   return (
     <div className="panel">
       <div className="panel-header">
