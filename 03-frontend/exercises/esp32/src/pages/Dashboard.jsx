@@ -2,13 +2,14 @@ import ShipmentCard from "../components/ShipmentCard";
 import DetailPanel from "../components/DetailPanel";
 import AlertPanel from "../components/AlertPanel";
 import StatCard from "../components/StatCard";
-import { getSeverity } from "../domain/status";
+import { getStatus } from "../domain/status";
 
 export default function Dashboard({
   shipments,
   selectedShipment,
   setSelectedShipment,
-  onResolve,
+  onRespond,
+  alerts,
   search,
 }) {
   const keyword = search.toLowerCase();
@@ -18,7 +19,8 @@ export default function Dashboard({
 
   const counts = shipments.reduce(
     (acc, item) => {
-      acc[getSeverity(item)] += 1;
+      const status = getStatus(item);
+      if (status in acc) acc[status] += 1;
       return acc;
     },
     { normal: 0, warning: 0, critical: 0 }
@@ -31,7 +33,7 @@ export default function Dashboard({
           title="Total shipments"
           value={shipments.length}
           className="stat-gradient"
-          trend="Repository: 5 shipments tracked"
+          trend={`${shipments.length} shipments tracked`}
         />
         <StatCard title="Normal" value={counts.normal} className="normal-card" />
         <StatCard title="Warning" value={counts.warning} className="warning-card" />
@@ -43,6 +45,7 @@ export default function Dashboard({
           <div className="panel-header">
             <h2>Shipments</h2>
           </div>
+          {visible.length === 0 && <p>No shipments. Create one to get started.</p>}
           {visible.map((item) => (
             <ShipmentCard
               key={item.id}
@@ -52,10 +55,10 @@ export default function Dashboard({
           ))}
         </div>
 
-        <DetailPanel shipment={selectedShipment} onResolve={onResolve} />
+        <DetailPanel key={selectedShipment?.id || "empty"} shipment={selectedShipment} alerts={alerts.filter((alert) => alert.shipmentId === selectedShipment?.id)} onRespond={onRespond} />
       </section>
 
-      <AlertPanel shipments={visible} />
+      <AlertPanel shipments={visible} alerts={alerts} onSelect={setSelectedShipment} />
     </>
   );
 }

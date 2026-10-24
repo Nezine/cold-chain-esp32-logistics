@@ -56,31 +56,29 @@ cấp, không bảo đảm exactly-once qua mọi lần reboot. Không đổi up
 
 ## Bảo — frontend
 
-Backend trả JSON ngay để nối giao diện. Làm trên nhánh frontend:
+Frontend đã được nối API trên main, giữ bố cục của branch frontend commit
+7fcd7cb. Đọc README của frontend để chạy. Các điểm đã triển khai:
 
-1. Cấu hình CRA proxy bằng field `"proxy":"http://127.0.0.1:8080"` trong package.json,
-   khởi động lại dev server. Fetch `/api/...` cùng origin; không gọi port khác
-   trực tiếp vì adapter không bật CORS wildcard. Cấu hình reverse proxy tương
-   đương khi triển khai build production, hiện chưa có deployment production.
-2. shipmentService gọi GET /api/shipments. Khi API mode, tắt useSensorSimulation;
-   không để timer mock ghi đè dữ liệu thật. Poll API 2 giây/lần là đủ cho demo.
-3. Hiển thị `severity` backend trả, giữ ưu tiên connection loading/timeout/error.
-   Lưu ý shipment mới có temperature=null, history=[], severity=normal.
-4. Lấy GET /api/alerts cho alertId thực; nút xử lý gọi POST /shipments/:id/responses
-   kèm alertId/action/note. Không tự sửa nhiệt độ trong resolveShipment.
-5. ResponseStatus=responded chỉ là đã xử lý; chờ reading tiếp theo để hiển thị
-   nhiệt độ thực. Dùng /shipments/:id/readings cho lịch sử đầy đủ.
+1. setupProxy.js route /api về backend port 8080, hỗ trợ cả HOST=127.0.0.1.
+2. shipmentService dùng HTTP thật; useLogistics poll khoảng 2 giây, giữ dữ liệu
+   cũ kèm cảnh báo khi mất kết nối. App không dùng useSensorSimulation.
+3. Form tạo shipment; severity lấy từ backend, connection loading được hiển thị
+   riêng; shipment mới chưa có nhiệt độ không được tính là normal trong dashboard.
+4. GET /alerts cung cấp alertId thực. DetailPanel chọn cảnh báo pending và gửi
+   action/note; phản hồi không sửa nhiệt độ. Trang Alerts giữ lịch sử responded.
+5. Live feed nhận alert ID mới, không lặp lại mỗi lần poll.
 
-Code frontend hiện vẫn dùng mock; đây là phần Bảo tiếp tục. Backend không tự sửa
-frontend hoặc hợp đồng cũ của bạn ấy trong lần bàn giao này.
+Bảo có thể tiếp tục cải thiện bố cục, UX, lịch sử chi tiết và hiển thị cảnh báo.
+Khi cập nhật branch frontend, merge main để lấy thay đổi tích hợp; không thay
+lớp API mới bằng service mock cũ.
 
 ## Trang — test và thuyết trình với Bảo
 
 Chạy check.sh và demo.py trước khi test UI. Các tình huống cần kiểm tra trên UI:
 shipment mới/loading; 5°C bình thường; 9°C warning; 12°C critical; ghi response;
 khởi động lại server; reading trùng; request lỗi; sensor mất kết nối (timeout là
-phần chưa triển khai tự động). UI hiện có test starter lỗi matchMedia và assertion
-learn-react cũ; sửa sau khi chốt hành vi frontend, không coi đó là backend lỗi.
+phần chưa triển khai tự động). Frontend hiện có 8 tests hành vi và smoke test Chromium dùng backend thật.
+Test starter cũ đã được thay; không có timer mock sửa dữ liệu trong App.
 
 Có 21 backend/API/bridge/legacy dispatch tests + 3 simulator tests hiện có.
 Firmware compile được kiểm tra riêng; kiểm thử USB thật vẫn cần board vật lý.
@@ -91,7 +89,7 @@ Workflow .github/workflows/backend.yml chạy build/check/demo và compile firmw
 
 Có thể dùng demo.py và các lớp trong src/backend.h cho kịch bản trình bày.
 Tách rõ bằng chứng: core C++ chạy thật, API adapter Python, sensor mô phỏng,
-firmware compile, UI đang nối API. Không ghi “đã triển khai DDD đầy đủ” hoặc “real-time
+firmware compile, UI đã nối API. Không ghi “đã triển khai DDD đầy đủ” hoặc “real-time
 qua WebSocket”: đây là phân tách nghiệp vụ/lưu trữ nhỏ và Observer đồng bộ nội bộ.
 
 ## HAnh — tích hợp và Git

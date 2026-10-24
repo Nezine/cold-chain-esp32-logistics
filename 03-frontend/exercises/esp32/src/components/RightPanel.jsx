@@ -8,7 +8,7 @@ export default function RightPanel({ feedEntries, observerCount }) {
           <h3>Live Alert Feed</h3>
         </div>
         <p className="panel-note">
-          Observer Pattern — each temperature change calls notify().
+          New temperature alerts from the backend.
         </p>
         <div className="feed-list">
           {feedEntries.length === 0 ? (

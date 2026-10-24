@@ -81,8 +81,8 @@ export default function Sidebar({ page, setPage }) {
       </nav>
 
       <div className="sidebar-footer">
-        <p>Repository mode</p>
-        <span>Mock sensor feed</span>
+        <p>Live monitoring</p>
+        <span>Backend connected data</span>
       </div>
     </aside>
   );
