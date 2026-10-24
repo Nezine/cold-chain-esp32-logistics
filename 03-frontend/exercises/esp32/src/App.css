@@ -944,3 +944,16 @@ textarea:focus-visible {
     flex-direction: column;
   }
 }
+
+.integration-form { display: grid; gap: 12px; margin-bottom: 20px; }
+.integration-form label { display: grid; gap: 6px; }
+.integration-form input, .integration-form select, .integration-form textarea {
+  width: 100%; min-width: 0; padding: 10px; box-sizing: border-box;
+  border: 1px solid var(--border); border-radius: 8px; color: inherit; background: transparent;
+}
+.integration-form option { color: #111; background: #fff; }
+.integration-form button, .status-note button {
+  padding: 10px 16px; border-radius: 8px; cursor: pointer;
+}
+.integration-form button:disabled { opacity: .6; cursor: wait; }
+.alert-link { padding: 0; border: 0; color: inherit; background: none; text-align: left; cursor: pointer; font: inherit; }

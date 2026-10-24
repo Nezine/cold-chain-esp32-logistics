@@ -17,5 +17,5 @@ bash 02-domain-backend/tools/start.sh
 - [Contract API v1 và cách Dũng gọi C++ từ ngôn ngữ API bất kỳ](docs/API_V1.md)
 - [Demo JSONL dispatch cũ](notes/dispatch-demo.md) — độc lập với snapshot backend mới.
 
-Dữ liệu/runtime/dependency nằm trong build/ đã ignore. Chưa nối frontend trong
-thay đổi này; Bảo dùng contract trên. Chưa xác minh hardware sensor/USB vật lý.
+Dữ liệu/runtime/dependency nằm trong build/ đã ignore. Frontend đã nối API;
+xem README trong 03-frontend/exercises/esp32 để chạy giao diện. Chưa xác minh hardware sensor/USB vật lý.

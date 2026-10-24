@@ -7,7 +7,7 @@ Adapter Python chỉ nhận HTTP, gọi process C++ và chuyển kết quả ra 
 nghiệp vụ và lưu dữ liệu nằm trong C++. Dũng có thể thay adapter này.
 
 Đây là hợp đồng triển khai để đồng đội tích hợp; cần review cùng nhóm trước khi
-chốt báo cáo. Tài liệu cũ trong frontend chưa được đồng bộ. Các khác biệt quan
+chốt báo cáo. Tài liệu frontend hiện trỏ về contract này. Các khác biệt quan
 trọng: reading có ID/device bắt buộc, response phải chọn alertId, trạng thái xử
 lý là `responded`, và severity do backend trả. Không tự đổi số đo để “resolve”.
 
@@ -79,9 +79,8 @@ Với min=2,max=8,margin=2: 2 và 8 normal; 0,8.1,10 warning; -0.1,10.1 critical
 Chưa phải tiêu chuẩn bảo quản sản phẩm thật. Mỗi reading không an toàn tạo một
 alert riêng. Reading hồi phục không xoá alert cũ và không tự ghi dispatch response.
 
-**Bảo:** frontend hiện có quy tắc `t > max` là critical, khác backend. Khi nối
-API, dùng `shipment.severity`; connection khác ok vẫn ưu tiên hiển thị connection.
-Không dùng logic mock để ghi đè giá trị backend.
+**Frontend** dùng `shipment.severity`; connection khác ok vẫn ưu tiên hiển thị
+connection. App không dùng timer mock để ghi đè giá trị backend.
 
 ### GET /alerts
 

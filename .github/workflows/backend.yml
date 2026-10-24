@@ -29,3 +29,20 @@ jobs:
         run: python -m pip install platformio==6.1.19
       - name: Compile pinned ESP32 target
         run: pio run -d 04-esp32-sensor -j 2
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 03-frontend/exercises/esp32
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: 03-frontend/exercises/esp32/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Test backend integration behavior
+        run: npm test -- --watchAll=false --runInBand
+      - name: Build dashboard
+        run: npm run build

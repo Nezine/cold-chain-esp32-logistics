@@ -50,6 +50,7 @@ export default function Dashboard({
           <div className="panel-header">
             <h2>Shipments</h2>
           </div>
+          {visible.length === 0 && <p>No shipments. Create one to get started.</p>}
           {visible.map((item) => (
             <ShipmentCard
               key={item.id}

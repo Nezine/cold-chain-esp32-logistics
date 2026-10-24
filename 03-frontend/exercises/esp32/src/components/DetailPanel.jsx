@@ -50,8 +50,7 @@ export default function DetailPanel({ shipment, alerts = [], onRespond }) {
 
   return (
     <div className="panel">
-      <h2>Shipment details</h2>
-      <h3>{shipment.name}</h3>
+      <h2>Shipment details</h2><h3>{shipment.name}</h3>
       <p className="label">Current temperature</p>
       <h1 id="detailTemp">
         {hasReading(shipment) ? formatTemperature(shipment.temperature) : "—"}
@@ -60,7 +59,6 @@ export default function DetailPanel({ shipment, alerts = [], onRespond }) {
         Safe range: {shipment.min}°C - {shipment.max}°C
       </div>
       <div className={`status-badge status ${status}`}>{statusLabel(status)}</div>
-
       <h4>Recent history</h4>
       <ul id="historyList">
         {shipment.history.length === 0 ? (

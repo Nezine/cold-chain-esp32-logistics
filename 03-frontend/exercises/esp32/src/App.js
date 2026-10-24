@@ -29,11 +29,30 @@ export default function App() {
   const [alerts, setAlerts] = useState([]);
   const [loadState, setLoadState] = useState("loading"); // loading | ready | error
   const [loadError, setLoadError] = useState("");
+=======
+import { useState, useEffect, useRef } from 'react';
+import './App.css';
+import Sidebar from './components/Sidebar';
+import Header from './components/Header';
+import Dashboard from './pages/Dashboard';
+import Shipments from './pages/Shipments';
+import Alerts from './pages/Alerts';
+import Reports from './pages/Reports';
+import Settings from './pages/Settings';
+import RightPanel from './components/RightPanel';
+import ShipmentForm from './components/ShipmentForm';
+import useLogistics from './hooks/useLogistics';
+import useTheme from './hooks/useTheme';
+import { createAlertSubject } from './domain/AlertObserver';
+
+export default function App() {
+  const [page, setPage] = useState('Dashboard');
   const [selectedId, setSelectedId] = useState(null);
-  const [clock, setClock] = useState("");
-  const [search, setSearch] = useState("");
+  const [clock, setClock] = useState('');
+  const [search, setSearch] = useState('');
   const [feedEntries, setFeedEntries] = useState([]);
   const { theme, toggleTheme } = useTheme();
+  const { shipments, alerts, loaded, error, refresh, create, respond } = useLogistics();
   const [alertSubject] = useState(() => createAlertSubject());
   const seenAlertIds = useRef(new Set());
   const refreshRef = useRef(null);
