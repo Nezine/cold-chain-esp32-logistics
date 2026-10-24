@@ -1,4 +1,5 @@
-import AlertPanel from '../components/AlertPanel';
-export default function Alerts({ shipments, alerts, onSelect }) {
-  return <AlertPanel shipments={shipments} alerts={alerts} onSelect={onSelect} />;
+import AlertPanel from "../components/AlertPanel";
+
+export default function Alerts({ shipments, alerts }) {
+  return <AlertPanel alerts={alerts} shipments={shipments} title="Alerts" limit={50} />;
 }

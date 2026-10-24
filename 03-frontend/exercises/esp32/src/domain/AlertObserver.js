@@ -1,4 +1,4 @@
-// Observer pattern: components subscribe, shipment updates notify them.
+// Observer pattern: components subscribe, every new alert notifies them.
 export function createAlertSubject() {
   const observers = new Set();
   return {
@@ -6,8 +6,8 @@ export function createAlertSubject() {
       observers.add(fn);
       return () => observers.delete(fn);
     },
-    notify(shipment) {
-      observers.forEach((fn) => fn(shipment));
+    notify(alert) {
+      observers.forEach((fn) => fn(alert));
     },
   };
 }

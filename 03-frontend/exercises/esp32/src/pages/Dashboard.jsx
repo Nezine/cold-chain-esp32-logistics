@@ -6,17 +6,21 @@ import { getStatus } from "../domain/status";
 
 export default function Dashboard({
   shipments,
+  alerts,
   selectedShipment,
   setSelectedShipment,
   onRespond,
-  alerts,
   search,
 }) {
   const keyword = search.toLowerCase();
   const visible = shipments.filter((item) =>
     item.name.toLowerCase().includes(keyword)
   );
+  const visibleIds = new Set(visible.map((item) => item.id));
+  const visibleAlerts = alerts.filter((alert) => visibleIds.has(alert.shipmentId));
 
+  // Severity comes from the backend; shipments without a live reading
+  // (loading/timeout/error) are not counted as normal.
   const counts = shipments.reduce(
     (acc, item) => {
       const status = getStatus(item);
@@ -25,6 +29,7 @@ export default function Dashboard({
     },
     { normal: 0, warning: 0, critical: 0 }
   );
+  const waiting = shipments.length - counts.normal - counts.warning - counts.critical;
 
   return (
     <>
@@ -33,7 +38,7 @@ export default function Dashboard({
           title="Total shipments"
           value={shipments.length}
           className="stat-gradient"
-          trend={`${shipments.length} shipments tracked`}
+          trend={waiting > 0 ? `${waiting} waiting for live data` : "All sensors reporting"}
         />
         <StatCard title="Normal" value={counts.normal} className="normal-card" />
         <StatCard title="Warning" value={counts.warning} className="warning-card" />
@@ -55,10 +60,15 @@ export default function Dashboard({
           ))}
         </div>
 
-        <DetailPanel key={selectedShipment?.id || "empty"} shipment={selectedShipment} alerts={alerts.filter((alert) => alert.shipmentId === selectedShipment?.id)} onRespond={onRespond} />
+        <DetailPanel
+          key={selectedShipment ? selectedShipment.id : "none"}
+          shipment={selectedShipment}
+          alerts={alerts}
+          onRespond={onRespond}
+        />
       </section>
 
-      <AlertPanel shipments={visible} alerts={alerts} onSelect={setSelectedShipment} />
+      <AlertPanel alerts={visibleAlerts} shipments={shipments} />
     </>
   );
 }

@@ -1,3 +1,5 @@
+import { USE_API } from "../services/shipmentService";
+
 const menus = [
   {
     id: "Dashboard",
@@ -81,8 +83,8 @@ export default function Sidebar({ page, setPage }) {
       </nav>
 
       <div className="sidebar-footer">
-        <p>Live monitoring</p>
-        <span>Backend connected data</span>
+        <p>Data source</p>
+        <span>{USE_API ? "Backend API" : "Mock sensor feed"}</span>
       </div>
     </aside>
   );

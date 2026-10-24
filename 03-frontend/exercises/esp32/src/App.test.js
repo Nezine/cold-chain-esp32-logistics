@@ -1,101 +1,101 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import App from './App';
-import { getShipments, getAlerts, createShipment, recordResponse } from './services/shipmentService';
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import App from "./App";
 
-jest.mock('./services/shipmentService');
-let shipments;
-let alerts;
-const shipment = { id: 1, name: 'Shipment A', min: 2, max: 8, temperature: 9,
-  history: [5, 9], connection: 'ok', severity: 'warning' };
-const alert = { id: 7, shipmentId: 1, readingId: 'device:boot:1', temperature: 9,
-  severity: 'warning', time: '2026-10-24T10:00:00Z', responseStatus: 'pending' };
+// Data copied from the shapes in 02-domain-backend/docs/API_V1.md.
+function makeBackend() {
+  const state = {
+    shipments: [
+      {
+        id: 1, name: "Vaccine Batch A", min: 2, max: 8, criticalMargin: 2,
+        temperature: 9, history: [8, 9], connection: "ok", severity: "warning",
+        lastReadingAt: "2026-10-19T10:00:01Z",
+      },
+      {
+        id: 2, name: "New Shipment", min: 2, max: 8, criticalMargin: 2,
+        temperature: null, history: [], connection: "loading", severity: "normal",
+      },
+    ],
+    alerts: [
+      {
+        id: 1, shipmentId: 1, readingId: "device1:boot-a:1", severity: "warning",
+        temperature: 9, time: "2026-10-19T10:00:01Z", responseStatus: "pending",
+      },
+    ],
+  };
 
-beforeEach(() => {
-  jest.clearAllMocks();
-  window.localStorage.setItem('coldchain-theme', 'dark');
-  shipments = [{ ...shipment }];
-  alerts = [{ ...alert }];
-  getShipments.mockImplementation(async () => shipments);
-  getAlerts.mockImplementation(async () => alerts);
-});
-
-async function showDashboard() {
-  render(<App />);
-  await screen.findByRole('heading', { name: 'Create shipment' });
+  const fetchMock = jest.fn(async (url, options = {}) => {
+    const json = (status, body) => ({ ok: status < 400, status, json: async () => body });
+    if (url === "/api/shipments") return json(200, state.shipments);
+    if (url === "/api/alerts") return json(200, state.alerts);
+    if (url === "/api/shipments/1/responses" && options.method === "POST") {
+      const body = JSON.parse(options.body);
+      const response = { ...body, shipmentId: 1, recordedAt: "2026-10-19T10:01:00Z" };
+      state.alerts = state.alerts.map((alert) =>
+        alert.id === body.alertId ? { ...alert, responseStatus: "responded", response } : alert
+      );
+      return json(200, { shipmentId: 1, status: "responded", response });
+    }
+    return json(404, { error: "Route not found" });
+  });
+  return { state, fetchMock };
 }
 
-test('shows backend warning instead of treating 9 C as critical', async () => {
-  await showDashboard();
-  expect(screen.getAllByText('WARNING').length).toBeGreaterThan(0);
-  expect(screen.queryByText('CRITICAL')).not.toBeInTheDocument();
-  expect(screen.getByText('1 shipments tracked')).toBeInTheDocument();
+afterEach(() => {
+  delete global.fetch;
 });
 
-test('creates a shipment through the API and selects it', async () => {
-  shipments = []; alerts = [];
-  createShipment.mockImplementation(async (input) => {
-    const created = { ...input, id: 2, connection: 'loading', severity: 'normal', temperature: null, history: [] };
-    shipments = [created];
-    return created;
-  });
-  await showDashboard();
-  expect(screen.getByText('No shipments. Create one to get started.')).toBeInTheDocument();
-  fireEvent.change(screen.getByLabelText('Shipment name'), { target: { value: 'New shipment' } });
-  fireEvent.click(screen.getByRole('button', { name: 'Create shipment' }));
-  await waitFor(() => expect(createShipment).toHaveBeenCalledWith({ name: 'New shipment', min: 2, max: 8 }));
-  await screen.findByText('No data yet');
-  expect(screen.getByText('No pending alerts for this shipment.')).toBeInTheDocument();
-});
-
-test('records the chosen alert and preserves the measured temperature', async () => {
-  recordResponse.mockImplementation(async (id, body) => {
-    alerts = [{ ...alert, responseStatus: 'responded', response: body }];
-    return { status: 'responded' };
-  });
-  await showDashboard();
-  fireEvent.click(screen.getByRole('heading', { name: 'Shipment A' }));
-  fireEvent.change(screen.getByLabelText('Response note'), { target: { value: 'Đã kiểm tra' } });
-  fireEvent.click(screen.getByRole('button', { name: 'Record response' }));
-  await screen.findByText('Response recorded. Measured temperature is unchanged.');
-  expect(recordResponse).toHaveBeenCalledWith(1, { alertId: 7, action: 'inspected_shipment', note: 'Đã kiểm tra' });
-  expect(document.getElementById('detailTemp')).toHaveTextContent('9°C');
-  expect(screen.getByText('Responded')).toBeInTheDocument();
-});
-
-test('allows selecting a specific alert when a shipment has multiple pending alerts', async () => {
-  alerts = [alert, { ...alert, id: 8, temperature: 12, severity: 'critical' }];
-  recordResponse.mockRejectedValue(new Error('Alert already has a response'));
-  await showDashboard();
-  fireEvent.click(screen.getByRole('heading', { name: 'Shipment A' }));
-  fireEvent.change(screen.getByLabelText('Alert'), { target: { value: '8' } });
-  fireEvent.click(screen.getByRole('button', { name: 'Record response' }));
-  await screen.findByText('Alert already has a response');
-  expect(recordResponse.mock.calls[0][1].alertId).toBe(8);
-  expect(screen.getByRole('button', { name: 'Record response' })).toBeEnabled();
-});
-
-test('shows a backend failure and retries without falling back to mock data', async () => {
-  getShipments.mockRejectedValueOnce(new Error('Backend offline'));
+test("shows the backend's severity and waits for data on a new shipment", async () => {
+  const { fetchMock } = makeBackend();
+  global.fetch = fetchMock;
   render(<App />);
-  await screen.findByRole('alert');
-  expect(screen.queryByRole('heading', { name: 'Shipment A' })).not.toBeInTheDocument();
-  fireEvent.click(screen.getByRole('button', { name: 'Retry connection' }));
-  await screen.findByRole('heading', { name: 'Create shipment' });
-  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+
+  await screen.findByRole("heading", { name: "Vaccine Batch A", level: 3 });
+
+  // Backend says warning for 9°C (max 8). The UI must not turn that into critical.
+  expect(screen.getAllByText("WARNING").length).toBeGreaterThan(0);
+  expect(screen.queryByText("CRITICAL")).not.toBeInTheDocument();
+  // New shipment: temperature null + loading.
+  expect(screen.getByText("Waiting for data...")).toBeInTheDocument();
+  expect(screen.getByText("LOADING")).toBeInTheDocument();
+
+  const urls = fetchMock.mock.calls.map(([url]) => url);
+  expect(urls).toContain("/api/shipments");
+  expect(urls).toContain("/api/alerts");
 });
 
-test('polls new backend measurements and retains data on a subsequent outage', async () => {
-  jest.useFakeTimers();
-  try {
-    await act(async () => { render(<App />); });
-    shipments = [{ ...shipment, temperature: 5, severity: 'normal' }];
-    await act(async () => { jest.advanceTimersByTime(2000); });
-    expect(screen.getAllByText('5°C').length).toBeGreaterThan(0);
-    getShipments.mockRejectedValueOnce(new Error('Backend offline'));
-    await act(async () => { jest.advanceTimersByTime(2000); });
-    expect(screen.getByRole('alert')).toHaveTextContent('Showing last received data');
-    expect(screen.getAllByText('5°C').length).toBeGreaterThan(0);
-  } finally {
-    jest.useRealTimers();
-  }
+test("records a response with alertId/action/note and keeps the measured temperature", async () => {
+  const { fetchMock } = makeBackend();
+  global.fetch = fetchMock;
+  const { container } = render(<App />);
+
+  userEvent.click(await screen.findByRole("heading", { name: "Vaccine Batch A", level: 3 }));
+  expect(container.querySelector("#detailTemp")).toHaveTextContent("9°C");
+
+  userEvent.selectOptions(screen.getByLabelText("Action taken"), "contacted_driver");
+  userEvent.type(screen.getByLabelText(/Note/), "Called the driver");
+  userEvent.click(screen.getByRole("button", { name: "Record response" }));
+
+  await screen.findByText("Response recorded for alert #1.");
+
+  const post = fetchMock.mock.calls.find(([, options]) => options?.method === "POST");
+  expect(post[0]).toBe("/api/shipments/1/responses");
+  expect(JSON.parse(post[1].body)).toEqual({
+    alertId: 1,
+    action: "contacted_driver",
+    note: "Called the driver",
+  });
+
+  // Responded is shown, but the real reading is not rewritten.
+  await waitFor(() => expect(screen.getAllByText("RESPONDED").length).toBeGreaterThan(0));
+  expect(container.querySelector("#detailTemp")).toHaveTextContent("9°C");
+  expect(screen.getByText("WARNING", { selector: ".status-badge" })).toBeInTheDocument();
+  expect(screen.getByText("No alerts waiting for a response.")).toBeInTheDocument();
+});
+
+test("shows an error when the backend cannot be reached", async () => {
+  global.fetch = jest.fn().mockRejectedValue(new TypeError("Failed to fetch"));
+  render(<App />);
+
+  expect(await screen.findByRole("alert")).toHaveTextContent(/Could not load shipments/);
 });

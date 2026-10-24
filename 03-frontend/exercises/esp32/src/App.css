@@ -168,7 +168,9 @@ nav button.active {
 
 nav button:focus-visible,
 button:focus-visible,
-input:focus-visible {
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
   outline: 2px solid var(--accent-light);
   outline-offset: 2px;
 }
@@ -276,9 +278,10 @@ input:focus-visible {
   color: white;
   font-size: 10px;
   font-weight: 700;
-  width: 17px;
+  min-width: 17px;
   height: 17px;
-  border-radius: 50%;
+  padding: 0 4px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -588,7 +591,7 @@ input:focus-visible {
   margin: 6px 0;
 }
 
-#resolveBtn {
+.respond-btn {
   background: var(--accent);
   color: var(--on-accent);
   border: none;
@@ -601,11 +604,11 @@ input:focus-visible {
   transition: background-color .2s ease, transform .18s cubic-bezier(.34, 1.56, .64, 1);
 }
 
-#resolveBtn:hover {
+.respond-btn:hover {
   background: var(--accent-light);
 }
 
-#resolveBtn:active {
+.respond-btn:active {
   transform: scale(.98);
 }
 
@@ -625,6 +628,133 @@ input:focus-visible {
   color: var(--muted);
   font-size: 13px;
   padding: 8px 0;
+}
+
+.alert-main {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.alert-name {
+  font-weight: 600;
+}
+
+.alert-meta {
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.alert-tags {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+.alert-more {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 12px;
+}
+
+/* Alert response state (separate from severity) */
+.response-pending {
+  background: var(--surface);
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+.response-responded {
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+/* ============ Respond to alert (detail panel) ============ */
+.respond-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.respond-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.respond-form select,
+.respond-form textarea {
+  background: var(--surface-light);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 10px;
+  font: inherit;
+  font-size: 13px;
+}
+
+.respond-form textarea {
+  resize: vertical;
+  min-height: 64px;
+}
+
+.respond-btn:disabled {
+  opacity: .6;
+  cursor: progress;
+}
+
+.form-message {
+  font-size: 12.5px;
+  margin-top: 12px;
+}
+
+.form-message-ok {
+  color: var(--green);
+}
+
+.form-message-error {
+  color: var(--red);
+}
+
+.response-summary {
+  color: var(--muted);
+  font-size: 12.5px;
+  margin-top: 14px;
+  overflow-wrap: anywhere;
+}
+
+.feed-tag {
+  display: inline-block;
+  margin-top: 4px;
+  font-style: normal;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Banner for loading / connection problems */
+.status-note {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.status-note-error {
+  color: var(--red);
+  background: var(--red-bg);
+  border-left: 3px solid var(--red);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
 }
 
 /* ============ Aside: insights ============ */

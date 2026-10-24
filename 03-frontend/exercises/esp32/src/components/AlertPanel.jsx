@@ -1,22 +1,65 @@
-import { statusLabel } from '../domain/status';
+import { statusLabel } from "../domain/status";
+import { formatTemperature, formatTime } from "../domain/format";
+import { actionLabel } from "../domain/responseActions";
 
-export default function AlertPanel({ shipments, alerts = [], title = 'Alert history', onSelect }) {
-  const byId = new Map(shipments.map((shipment) => [shipment.id, shipment]));
-  const visible = alerts.filter((alert) => byId.has(alert.shipmentId));
+// Pending alerts first (they need action), then newest first.
+function byPriority(a, b) {
+  const pendingA = a.responseStatus === "pending" ? 0 : 1;
+  const pendingB = b.responseStatus === "pending" ? 0 : 1;
+  return pendingA - pendingB || b.id - a.id;
+}
+
+export default function AlertPanel({
+  alerts = [],
+  shipments = [],
+  title = "Live Alerts",
+  limit = 6,
+}) {
+  const nameById = new Map(shipments.map((item) => [item.id, item.name]));
+  const sorted = [...alerts].sort(byPriority);
+  const shown = sorted.slice(0, limit);
+
   return (
     <div className="panel">
-      <div className="panel-header"><h2>{title}</h2></div>
-      {visible.length === 0 ? <p className="alert-empty">No alerts.</p> : [...visible].reverse().map((alert) => (
-        <div key={alert.id} className="alert-item">
-          <div>
-            <button className="alert-link" onClick={() => onSelect?.(byId.get(alert.shipmentId))}>{byId.get(alert.shipmentId).name} · Alert #{alert.id}</button>
-            <p>{alert.temperature}°C · {new Date(alert.time).toLocaleString()}</p>
-            <p>{alert.responseStatus === 'responded' ? 'Responded' : 'Pending response'}</p>
-            {alert.response && <p>{alert.response.action}: {alert.response.note}</p>}
-          </div>
-          <span className={`status ${alert.severity}`}>{statusLabel(alert.severity)}</span>
-        </div>
-      ))}
+      <div className="panel-header">
+        <h2>{title}</h2>
+      </div>
+      {shown.length === 0 ? (
+        <p className="alert-empty">No alerts.</p>
+      ) : (
+        shown.map((alert) => {
+          const responded = alert.responseStatus === "responded";
+          return (
+            <div key={alert.id} className="alert-item">
+              <div className="alert-main">
+                <span className="alert-name">
+                  {nameById.get(alert.shipmentId) || `Shipment #${alert.shipmentId}`}
+                </span>
+                <span className="alert-meta">
+                  {formatTemperature(alert.temperature)} · {formatTime(alert.time)}
+                </span>
+                {responded && alert.response && (
+                  <span className="alert-meta">
+                    {actionLabel(alert.response.action)}
+                    {alert.response.note ? ` — ${alert.response.note}` : ""}
+                  </span>
+                )}
+              </div>
+              <div className="alert-tags">
+                <span className={`status ${alert.severity}`}>{statusLabel(alert.severity)}</span>
+                <span className={`status response-${responded ? "responded" : "pending"}`}>
+                  {statusLabel(responded ? "responded" : "pending")}
+                </span>
+              </div>
+            </div>
+          );
+        })
+      )}
+      {sorted.length > shown.length && (
+        <p className="alert-more">
+          Showing {shown.length} of {sorted.length} alerts.
+        </p>
+      )}
     </div>
   );
 }

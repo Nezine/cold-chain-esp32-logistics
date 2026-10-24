@@ -1,4 +1,5 @@
-import { getStatus, statusLabel } from "../domain/status";
+import { getStatus, hasReading, statusLabel } from "../domain/status";
+import { formatTemperature } from "../domain/format";
 
 export default function ShipmentCard({ shipment, onSelect }) {
   const status = getStatus(shipment);
@@ -7,7 +8,7 @@ export default function ShipmentCard({ shipment, onSelect }) {
     <div className="shipment" onClick={() => onSelect?.(shipment)}>
       <div>
         <h3>{shipment.name}</h3>
-        <p>{shipment.connection === "ok" ? `${shipment.temperature}°C` : "Waiting for data..."}</p>
+        <p>{hasReading(shipment) ? formatTemperature(shipment.temperature) : "Waiting for data..."}</p>
       </div>
       <span className={`status ${status}`}>{statusLabel(status)}</span>
     </div>

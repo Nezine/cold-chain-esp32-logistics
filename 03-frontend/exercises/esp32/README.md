@@ -14,6 +14,16 @@ bash 02-domain-backend/tools/start.sh
 
 Terminal 2:
 
+Chạy backend trước (từ thư mục gốc repo, xem `02-domain-backend/docs/HANDOFF.md`):
+
+```bash
+bash 02-domain-backend/tools/setup.sh   # lần đầu
+bash 02-domain-backend/tools/start.sh   # port 8080
+```
+
+Rồi chạy frontend (proxy `/api` -> `127.0.0.1:8080` đã cấu hình trong `package.json`;
+khởi động lại `npm start` nếu vừa đổi proxy):
+
 ```bash
 cd 03-frontend/exercises/esp32
 npm ci
@@ -67,12 +77,10 @@ API và reload trang vẫn giữ response/số đo.
 
 ## Cấu trúc và contract
 
-- src/services/shipmentService.js: HTTP repository client, không fallback mock.
-- src/hooks/useLogistics.js: polling, bảo vệ snapshot cũ và refresh sau mutation.
-- src/domain/status.js: dùng severity backend trả; ưu tiên connection khi chưa có dữ liệu.
-- src/domain/AlertObserver.js: thông báo cho live feed khi thấy alert ID mới.
-- src/components/DetailPanel.jsx: chọn alert và ghi action/note.
-- src/data/shipments.js và useSensorSimulation.js: fixture/bài tập cũ, không dùng trong App.
-
-[Contract API chuẩn](../../../02-domain-backend/docs/API_V1.md).
-Không có auth, deploy production hoặc phát hiện sensor timeout tự động trong bản demo này.
+- Dữ liệu shipment và alert: lấy từ backend qua `services/shipmentService.js`, tải lại mỗi 2 giây
+  (`GET /api/shipments`, `GET /api/alerts`). Mất kết nối thì giữ dữ liệu cũ và tự thử lại.
+- Severity (`normal | warning | critical`) do backend trả về; UI không tự tính (`domain/status.js`).
+- Nút "Record response" gửi `alertId`, `action`, `note` tới `POST /api/shipments/:id/responses`.
+  Alert chuyển sang `RESPONDED`, số đo nhiệt độ giữ nguyên.
+- Cảnh báo mới được thông báo bằng Observer pattern (`domain/AlertObserver.js`): Live Alert Feed đăng ký nhận.
+- Chi tiết endpoint và quy tắc hiển thị: `docs/API_CONTRACT.md`.
