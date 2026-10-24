@@ -74,6 +74,7 @@ export default function DetailPanel({ shipment, alerts = [], onRespond }) {
           <label>
             Alert
             <select
+              aria-label="Alert"
               value={activeAlert.id}
               onChange={(event) => setChosenAlertId(Number(event.target.value))}
             >
@@ -87,7 +88,7 @@ export default function DetailPanel({ shipment, alerts = [], onRespond }) {
           </label>
           <label>
             Action taken
-            <select value={action} onChange={(event) => setAction(event.target.value)}>
+            <select aria-label="Action taken" value={action} onChange={(event) => setAction(event.target.value)}>
               {RESPONSE_ACTIONS.map((item) => (
                 <option key={item.value} value={item.value}>
                   {item.label}
@@ -98,6 +99,7 @@ export default function DetailPanel({ shipment, alerts = [], onRespond }) {
           <label>
             Note (optional)
             <textarea
+              aria-label="Note (optional)"
               value={note}
               maxLength={1000}
               onChange={(event) => setNote(event.target.value)}

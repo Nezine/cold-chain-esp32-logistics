@@ -5,7 +5,7 @@ import * as mockBackend from "./mockBackend";
 // without the backend (in-memory data + simulated sensor).
 export const USE_API = process.env.REACT_APP_USE_MOCK !== "true";
 
-// In development the CRA proxy ("proxy" in package.json) forwards /api to the
+// In development the CRA proxy (src/setupProxy.js) forwards /api to the
 // backend on 127.0.0.1:8080, so keep requests same-origin. Set
 // REACT_APP_API_URL only when a reverse proxy is not available.
 const BASE_URL = process.env.REACT_APP_API_URL || "/api";
@@ -41,7 +41,7 @@ async function request(path, { method = "GET", body } = {}) {
     // Typical cause in development: the CRA proxy is not active, so the dev
     // server answers /api/... with the app's index.html instead of JSON.
     throw new ApiError(
-      "Got a web page instead of JSON. Restart `npm start` so the proxy in package.json is applied, and check the backend is running on port 8080.",
+      "Got a web page instead of JSON. Restart `npm start` so src/setupProxy.js is loaded, and check the backend is running on port 8080.",
       response.status
     );
   }

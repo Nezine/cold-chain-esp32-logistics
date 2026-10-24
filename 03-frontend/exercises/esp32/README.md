@@ -1,6 +1,6 @@
 # Cold Chain Monitor — Frontend
 
-Giao diện React kết nối C++ backend: tạo shipment, đọc nhiệt độ/cảnh báo, chọn
+Giao diện React kết nối C++ backend: đọc shipment và nhiệt độ/cảnh báo, chọn
 cảnh báo để ghi phản hồi và giữ lịch sử sau khi server khởi động lại.
 
 ## Chạy từ repo đã clone
@@ -12,17 +12,7 @@ bash 02-domain-backend/tools/setup.sh
 bash 02-domain-backend/tools/start.sh
 ```
 
-Terminal 2:
-
-Chạy backend trước (từ thư mục gốc repo, xem `02-domain-backend/docs/HANDOFF.md`):
-
-```bash
-bash 02-domain-backend/tools/setup.sh   # lần đầu
-bash 02-domain-backend/tools/start.sh   # port 8080
-```
-
-Rồi chạy frontend (proxy `/api` -> `127.0.0.1:8080` đã cấu hình trong `package.json`;
-khởi động lại `npm start` nếu vừa đổi proxy):
+Terminal 2, chạy frontend với proxy `/api` trong `src/setupProxy.js`:
 
 ```bash
 cd 03-frontend/exercises/esp32
@@ -34,10 +24,19 @@ src/setupProxy.js chuyển /api sang backend local port 8080. Không cần đổ
 hoặc thêm field proxy trong package.json. Khi triển khai production, reverse
 proxy của host phải chuyển /api sang backend; npm run build chỉ tạo static files.
 
-Tạo shipment bằng form trong Dashboard. Shipment mới hiển thị LOADING cho đến
+Bản UI hiện tại không có form tạo shipment. Tạo qua API trước:
+
+```bash
+curl -fsS http://127.0.0.1:8080/api/shipments -H 'Content-Type: application/json' \
+  -d '{"name":"Demo shipment","min":2,"max":8}'
+```
+
+Shipment mới hiển thị LOADING cho đến
 reading đầu tiên. Dữ liệu được tải lại tuần tự khoảng 2 giây/lần; không có timer
 frontend tự sửa nhiệt độ. Nếu backend mất kết nối, UI báo lỗi, giữ bản dữ liệu
-cuối cùng và cho Retry connection; không tự chuyển sang dữ liệu mock.
+cuối cùng và tự thử lại; không tự chuyển sang dữ liệu mock.
+Để demo độc lập không có backend, chạy `REACT_APP_USE_MOCK=true npm start`.
+Chế độ mock là lựa chọn khi khởi động, dữ liệu chỉ ở RAM và không phải kiểm thử API thật.
 
 Gửi fixture từ repository root, thay --shipment-id bằng ID shipment đã tạo:
 
@@ -58,8 +57,8 @@ CI=true npm test -- --watchAll=false --runInBand
 npm run build
 ```
 
-8 tests kiểm tra dữ liệu backend, tạo shipment, chọn đúng alert, không đổi nhiệt
-độ khi phản hồi, lỗi kết nối, polling/retry và định dạng request. Test starter
+18 tests kiểm tra API client, mock backend, severity và hành vi ứng dụng, gồm
+phản hồi cảnh báo và lỗi kết nối. Test starter
 learn-react cũ đã được thay bằng kiểm thử hành vi ứng dụng.
 
 Có thêm smoke test Chromium dùng backend C++ thật. Cần Playwright 1.58.0 và
@@ -71,8 +70,8 @@ python3 tools/browser_smoke.py
 # Có thể chỉ định --frontend-url và --chromium nếu port/path khác.
 ```
 
-Smoke test không xoá data server thật, không intercept/mock HTTP. Nó kiểm tra tạo
-shipment từ UI, 5/9/12°C, lưu phản hồi, không drift sau 4 giây, mất kết nối, restart
+Smoke test không xoá data server thật, không intercept/mock HTTP. Nó tạo
+shipment qua API rồi kiểm tra UI loading, 5/9/12°C, lưu phản hồi, không drift sau 4 giây, mất kết nối, restart
 API và reload trang vẫn giữ response/số đo.
 
 ## Cấu trúc và contract
