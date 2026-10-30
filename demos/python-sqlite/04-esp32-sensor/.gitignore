@@ -1,0 +1,6 @@
+.pio/
+.vscode/
+.dist/
+**/.dist/
+tools/build/
+alerts.jsonl

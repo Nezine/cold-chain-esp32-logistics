@@ -1,5 +1,11 @@
 # Cold Chain Logistics Project
 
+## Báo cáo và bản demo đã hoàn thiện
+
+- [Báo cáo kỹ thuật C++ cập nhật](output/pdf/ColdChain_Technical_Report_2026_Updated.pdf), đối chiếu mã nguồn C++ commit `0a65a45`.
+- [Ghi nhận kiểm tra báo cáo](05-qa-documentation/CPP_REPORT_REVIEW.md).
+- [Bản demo Python/SQLite độc lập](demos/python-sqlite/README.md), gồm sửa lỗi tạo nhiều shipment, hướng dẫn demo, nội dung thuyết trình và ảnh UI. Chạy các lệnh của bản này từ `demos/python-sqlite`; API của nó khác bản C++ ở thư mục gốc.
+
 ## Team Roles
 
 1. Lead: coordination, scope, decisions, and integration tracking.

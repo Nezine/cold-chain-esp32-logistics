@@ -1,4 +1,8 @@
 # Operating system files
+/tmp/
+*.sqlite3
+*.sqlite3-*
+.npm-cache/
 .DS_Store
 Thumbs.db
 
